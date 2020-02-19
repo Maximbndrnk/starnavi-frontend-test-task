@@ -5,6 +5,7 @@ import { GameRoutingModule } from './game-routing.module';
 import { GameWinnersResolver } from './game-winners.resolver';
 import { GameSettingsResolver } from './game-settings.resolver';
 import { ScoreBoardComponent } from './score-board/score-board.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { ScoreBoardComponent } from './score-board/score-board.component';
   imports: [
     CommonModule,
     GameRoutingModule,
+    SharedModule,
   ],
   providers: [
     GameWinnersResolver,
