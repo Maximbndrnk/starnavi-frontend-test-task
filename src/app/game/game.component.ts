@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { GameService } from '../core/game/game.service';
 
 @Component({
   selector: 'app-game',
@@ -8,15 +9,24 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class GameComponent implements OnInit {
 
-gameSettings = {};
-gameWinners = [];
+  gameSettings = {};
+  gameWinners = [];
+  winner = {};
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private gameService: GameService,
+              private route: ActivatedRoute) {
+  }
 
   ngOnInit(): void {
-    this.gameSettings = this.route.snapshot.data['gameSettings'];
-    this.gameWinners = this.route.snapshot.data['gameWinners'];
+    this.gameSettings = this.route.snapshot.data.gameSettings;
+    this.gameWinners = this.route.snapshot.data.gameWinners;
     console.log('Data', this);
+  }
+
+  sendResult() {
+    this.gameService.sendResult(this.winner).subscribe((resp) => {
+      console.log('all is ok');
+    });
   }
 
 }

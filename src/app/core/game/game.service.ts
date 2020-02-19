@@ -17,4 +17,8 @@ export class GameService {
     return this.apiService.get('winners');
   }
 
+  sendResult(data) {
+    return this.apiService.post('winners', data);
+  }
+
 }
