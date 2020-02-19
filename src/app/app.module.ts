@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GameModule } from './game/game.module';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -11,6 +12,7 @@ import { GameModule } from './game/game.module';
   ],
   imports: [
     BrowserModule,
+    CoreModule,
     AppRoutingModule,
     GameModule,
   ],

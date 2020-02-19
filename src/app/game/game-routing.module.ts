@@ -1,19 +1,22 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { GameComponent } from './game.component';
+import { GameSettingsResolver } from './game-settings.resolver';
+import { GameWinnersResolver } from './game-winners.resolver';
 
 const routes: Routes = [
   {
     path: 'game',
     component: GameComponent,
     resolve: {
-      // posts: '',
+      gameSettings: GameSettingsResolver,
+      gameWinners: GameWinnersResolver
     },
     pathMatch: 'full',
   },
   {
     path: '**',
-    component: GameComponent,
+    redirectTo: 'game'
   },
 ];
 
