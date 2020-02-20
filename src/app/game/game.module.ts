@@ -6,6 +6,7 @@ import { GameWinnersResolver } from './game-winners.resolver';
 import { GameSettingsResolver } from './game-settings.resolver';
 import { ScoreBoardComponent } from './score-board/score-board.component';
 import { SharedModule } from '../shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     GameRoutingModule,
     SharedModule,
+    ReactiveFormsModule,
   ],
   providers: [
     GameWinnersResolver,
