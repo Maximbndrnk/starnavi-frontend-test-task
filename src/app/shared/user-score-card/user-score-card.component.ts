@@ -12,7 +12,6 @@ export class UserScoreCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('eee', this);
   }
 
 }

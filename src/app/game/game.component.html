@@ -13,6 +13,8 @@
         <button type="submit"
                 [disabled]="gameForm.invalid || isGameRunning"> Play
         </button>
+
+        <button (click)="stopGame()" *ngIf="isGameRunning"> Stop </button>
       </form>
     </div>
 
@@ -27,6 +29,10 @@
     <div class="play-ground-container">
       <div class="pg-row" *ngFor="let row of playGroundArr">
         <button type="button" class="pg-ceil"
+                [ngClass]="{
+                'green': ceil.winner == 1 && ceil.alreadyUsed,
+                'red': ceil.winner == 2 && ceil.alreadyUsed,
+                'blue': ceil.status == 1}"
                 *ngFor="let ceil of row" (click)="handleClick(ceil)"
                 [disabled]="ceil.status === 0"></button>
       </div>

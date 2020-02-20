@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GameService } from '../core/game/game.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Ceil } from './ceil.interface';
-import { interval, of } from 'rxjs';
+import { interval } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -12,8 +12,6 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-  const;
-  nums = of(3, 2, 1, 0);
 
   playGroundArr = [];
   gameSettings = [];
@@ -27,10 +25,11 @@ export class GameComponent implements OnInit {
     user: 0,
     ai: 0,
   };
-  pointsToWin = 0;
+  pointsToWin = -1;
   changeInterval = 0;
+  gameCeilNumber = 0;
   isGameRunning = false;
-
+  gameSbsc: any;
   message = 'Enter your name and difficulty';
 
 
@@ -46,7 +45,6 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     this.gameSettings = this.getGameSettings(this.route.snapshot.data.gameSettings);
     this.gameWinners = this.route.snapshot.data.gameWinners;
-    console.log('Data', this);
   }
 
   getGameSettings(settings): any[] {
@@ -59,15 +57,27 @@ export class GameComponent implements OnInit {
 
   sendResult() {
     this.winner.date = new Date(Date.now());
+    this.winner.winner = this.score.user > this.score.ai ? this.gameForm.value.name : 'AI';
     this.gameService.sendResult(this.winner).subscribe((resp) => {
-      console.log('all is ok');
+      this.gameWinners.push(this.winner);
+    }, (err) => {
+    }, () => {
+      this.resetData();
     });
   }
 
-  endGame() {
-    this.pointsToWin = 0;
+  resetData() {
+    this.message = `Last game ${ this.score.user > this.score.ai ? this.gameForm.value.name : 'AI'} win. Enter your name and difficulty`;
+    this.pointsToWin = -1;
     this.playGroundArr = [];
     this.isGameRunning = false;
+  }
+
+  stopGame() {
+    this.resetData();
+  }
+
+  endGame() {
     this.sendResult();
   }
 
@@ -75,36 +85,79 @@ export class GameComponent implements OnInit {
     console.log('Val', this.gameForm.value);
     this.message = `Preparing game.`;
     this.createPlayGround();
+    // this.startGame();
+    this.score = {user: 0, ai: 0,};
     this.launchCountdown();
   }
 
   startGame() {
-    console.log('Val', this.gameForm.value);
     this.message = `Go!!!`;
     this.isGameRunning = true;
+    this.gameSbsc = interval(+this.changeInterval).pipe(take(this.gameCeilNumber ** 2));
+    let currCeil = new Ceil();
+    currCeil.alreadyUsed = true;
+    this.gameSbsc.subscribe((i) => {
+      if (currCeil.winner !== 1 && currCeil.status === 1) {
+        currCeil.winner = 2;
+        currCeil.alreadyUsed = true;
+        currCeil.status = 0;
+        this.score.ai++;
+      }
+
+      if (this.score.user === this.pointsToWin || this.score.ai === this.pointsToWin) {
+        this.endGame();
+      } else {
+        let counter = 0;
+        while (currCeil.alreadyUsed) {
+          if (counter > this.gameCeilNumber ** 2) {
+            break;
+          }
+          counter++;
+          const x = this.getRandomInt(this.gameCeilNumber - 1);
+          const y = this.getRandomInt(this.gameCeilNumber - 1);
+          currCeil = this.playGroundArr[x][y];
+        }
+        currCeil.status = 1;
+      }
+    });
   }
 
   createPlayGround() {
     const numOfCeils: number = +this.gameForm.value.difficulty;
+    this.gameCeilNumber = numOfCeils;
     this.changeInterval = this.gameSettings.find(i => i.field == numOfCeils).delay;
-    console.log('changeInterval', this.changeInterval);
     this.pointsToWin = Math.floor((numOfCeils ** 2) / 2) + 1;
-    this.playGroundArr = Array(numOfCeils).fill(Array(numOfCeils).fill(new Ceil()));
+    for (let i = 0; i < this.gameCeilNumber; i++) {
+      for (let j = 0; j < this.gameCeilNumber; j++) {
+        if (!this.playGroundArr[i]) {
+          this.playGroundArr[i] = [];
+        }
+        this.playGroundArr[i][j] = new Ceil();
+      }
+    }
   }
 
   launchCountdown() {
     let counter = 3;
-    const secondsCounter = interval(1000).pipe(take(5));
+    const secondsCounter = interval(500).pipe(take(5));
 
     secondsCounter.subscribe((i) => {
-      console.log(i);
       i === 4 ? this.startGame() : this.message = `The game will start in ${counter--}`;
     });
 
   }
 
   handleClick(ceil: Ceil) {
-    console.log('item clicked');
+    if (ceil.status === 1) {
+      ceil.winner = 1;
+      ceil.alreadyUsed = true;
+      this.score.user++;
+    }
+
+  }
+
+  getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max + 1));
   }
 
 }
