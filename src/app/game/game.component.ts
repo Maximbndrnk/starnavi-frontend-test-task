@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { GameService } from '../core/game/game.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Ceil } from './ceil.interface';
+import { interval, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-game',
@@ -10,6 +12,8 @@ import { Ceil } from './ceil.interface';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
+  const;
+  nums = of(3, 2, 1, 0);
 
   playGroundArr = [];
   gameSettings = [];
@@ -19,7 +23,13 @@ export class GameComponent implements OnInit {
     date: new Date(),
   };
   gameForm: FormGroup;
+  score = {
+    user: 0,
+    ai: 0,
+  };
   pointsToWin = 0;
+  changeInterval = 0;
+  isGameRunning = false;
 
   message = 'Enter your name and difficulty';
 
@@ -57,25 +67,39 @@ export class GameComponent implements OnInit {
   endGame() {
     this.pointsToWin = 0;
     this.playGroundArr = [];
+    this.isGameRunning = false;
     this.sendResult();
   }
 
-  startGame() {
+  prepareGame() {
     console.log('Val', this.gameForm.value);
+    this.message = `Preparing game.`;
     this.createPlayGround();
     this.launchCountdown();
   }
 
-  createPlayGround() {
-    const numOfCeils: number = +this.gameForm.value.difficulty;
-    this.pointsToWin = Math.floor((numOfCeils ** 2) / 2) + 1;
-    console.log('numof', numOfCeils, typeof numOfCeils);
-    console.log('pointsToWin', this.pointsToWin);
-    this.playGroundArr = Array(numOfCeils).fill(Array(numOfCeils).fill(new Ceil()));
-    console.log('this.playGroundArr', this.playGroundArr);
+  startGame() {
+    console.log('Val', this.gameForm.value);
+    this.message = `Go!!!`;
+    this.isGameRunning = true;
   }
 
-  launchCountdown(){
+  createPlayGround() {
+    const numOfCeils: number = +this.gameForm.value.difficulty;
+    this.changeInterval = this.gameSettings.find(i => i.field == numOfCeils).delay;
+    console.log('changeInterval', this.changeInterval);
+    this.pointsToWin = Math.floor((numOfCeils ** 2) / 2) + 1;
+    this.playGroundArr = Array(numOfCeils).fill(Array(numOfCeils).fill(new Ceil()));
+  }
+
+  launchCountdown() {
+    let counter = 3;
+    const secondsCounter = interval(1000).pipe(take(5));
+
+    secondsCounter.subscribe((i) => {
+      console.log(i);
+      i === 4 ? this.startGame() : this.message = `The game will start in ${counter--}`;
+    });
 
   }
 

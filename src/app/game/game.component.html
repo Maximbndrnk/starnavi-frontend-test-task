@@ -2,7 +2,7 @@
   <div class="game-container">
 
     <div class="form-container">
-      <form [formGroup]="gameForm" (ngSubmit)="startGame()">
+      <form [formGroup]="gameForm" (ngSubmit)="prepareGame()">
 
         <select formControlName="difficulty">
           <option [value]="sett.field" *ngFor="let sett of gameSettings"> {{sett.label}}</option>
@@ -11,13 +11,17 @@
         <input type="text" formControlName="name" placeholder="Enter name">
 
         <button type="submit"
-                [disabled]="gameForm.invalid"> Play
+                [disabled]="gameForm.invalid || isGameRunning"> Play
         </button>
       </form>
     </div>
 
     <div class="message-container">
       <h4>{{message}}</h4>
+    </div>
+
+    <div class="message-container" *ngIf="isGameRunning">
+      <h3>{{gameForm.value.name}}&nbsp;&nbsp;&nbsp;{{score.user}} : {{score.ai}}&nbsp;&nbsp;&nbsp;AI</h3>
     </div>
 
     <div class="play-ground-container">
