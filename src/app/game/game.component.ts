@@ -71,6 +71,7 @@ export class GameComponent implements OnInit {
     this.pointsToWin = -1;
     this.playGroundArr = [];
     this.isGameRunning = false;
+    this.gameSbsc.unsubscribe();
   }
 
   stopGame() {
@@ -82,6 +83,7 @@ export class GameComponent implements OnInit {
   }
 
   prepareGame() {
+    this.isGameRunning = true;
     console.log('Val', this.gameForm.value);
     this.message = `Preparing game.`;
     this.createPlayGround();
@@ -92,11 +94,10 @@ export class GameComponent implements OnInit {
 
   startGame() {
     this.message = `Go!!!`;
-    this.isGameRunning = true;
-    this.gameSbsc = interval(+this.changeInterval).pipe(take(this.gameCeilNumber ** 2));
+    const sbsc = interval(+this.changeInterval).pipe(take(this.gameCeilNumber ** 2));
     let currCeil = new Ceil();
     currCeil.alreadyUsed = true;
-    this.gameSbsc.subscribe((i) => {
+    this.gameSbsc = sbsc.subscribe((i) => {
       if (currCeil.winner !== 1 && currCeil.status === 1) {
         currCeil.winner = 2;
         currCeil.alreadyUsed = true;
