@@ -1,3 +1,9 @@
+.common-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .playground-container {
   width: 100%;
   display: flex;
@@ -5,6 +11,7 @@
   box-sizing: border-box;
   max-height: 100vh;
   margin: 0;
+
   .game-container, .score-board-container {
     width: 50%;
     padding: 10px;
@@ -18,4 +25,52 @@
 
   }
 
+}
+
+
+.form-container {
+  @extend .common-container;
+
+  width: 100%;
+
+  * {
+    margin: 5px;
+    height: 25px;
+  }
+
+  button {
+    width: 100px;
+    border-radius: 5px;
+    background-color: #5ab493;
+    font-size: 20px;
+    color: white;
+    height: unset;
+    padding: 5px;
+
+    &:disabled {
+      background-color: gray;
+    }
+  }
+}
+
+
+.message-container {
+  @extend .common-container;
+}
+
+.play-ground-container {
+  @extend .common-container;
+
+  .pg-row {
+    margin: 0;
+    padding: 0;
+    @extend .common-container;
+    flex-direction: column;
+
+    button.pg-ceil {
+      background-color: transparent;
+      width: 25px;
+      height: 25px;
+    }
+  }
 }

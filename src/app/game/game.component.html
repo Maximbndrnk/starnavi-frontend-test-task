@@ -1,17 +1,33 @@
 <div class="playground-container">
   <div class="game-container">
-    <form [formGroup]="gameForm" (ngSubmit)="startGame()">
 
-      <select formControlName="difficulty">
-        <option [value]="sett.field" *ngFor="let sett of gameSettings"> {{sett.label}}</option>
-      </select>
+    <div class="form-container">
+      <form [formGroup]="gameForm" (ngSubmit)="startGame()">
 
-      <input type="text" formControlName="name" placeholder="Enter name">
+        <select formControlName="difficulty">
+          <option [value]="sett.field" *ngFor="let sett of gameSettings"> {{sett.label}}</option>
+        </select>
 
-      <button type="submit"
-              [disabled]="gameForm.invalid">Play
-      </button>
-    </form>
+        <input type="text" formControlName="name" placeholder="Enter name">
+
+        <button type="submit"
+                [disabled]="gameForm.invalid"> Play
+        </button>
+      </form>
+    </div>
+
+    <div class="message-container">
+      <h4>{{message}}</h4>
+    </div>
+
+    <div class="play-ground-container">
+      <div class="pg-row" *ngFor="let row of playGroundArr">
+        <button type="button" class="pg-ceil"
+                *ngFor="let ceil of row" (click)="handleClick(ceil)"
+                [disabled]="ceil.status === 0"></button>
+      </div>
+    </div>
+
   </div>
   <div class="score-board-container">
     <app-score-board [winners]="gameWinners"></app-score-board>
